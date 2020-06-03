@@ -17,4 +17,13 @@ public class Request {
         this.requestId = Request.ids;
         this.caller = caller;
     }
+
+    public Request(Floor to, Floor from, String direction){
+        this.to = to;
+        this.from = from;
+        this.direction = direction;
+        Request.ids++;
+        this.requestId = Request.ids;
+        this.caller = caller;
+    }
 }

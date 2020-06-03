@@ -42,11 +42,13 @@ public class Building {
         return (Elevator) availableElevator.get();
     }
 
-    public void processRequest(Request request){
+    public boolean processRequest(Request request){
         Optional requestToDelete = this.requestList.stream().filter(request1 -> request1.requestId == request.requestId).findFirst();
         if(requestToDelete.isPresent()){
             this.requestList.remove(requestToDelete.get());
+            return true;
         }
+        return false;
     }
 
 }

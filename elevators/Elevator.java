@@ -69,9 +69,10 @@ public class Elevator {
         if(this.maxCapacity >= this.occupants.size()){
             System.out.println(String.format("Currently on floor %s", this.position.floor_number));
             if(canMove(request.to.floor_number, request.direction) && this.position.floor_number == request.to.floor_number) {
-                System.out.println("Opening doors");
+                System.out.println("Opening doors immediately, already on the requested floor");
                 this.doors_open = true;
                 this.isMoving = false;
+                return;
             }
             if(canMove(request.to.floor_number, request.direction)){
                 request.processing = true;
@@ -80,21 +81,25 @@ public class Elevator {
                 this.isMoving = true;
                 System.out.println(String.format("Moving to Floor %s", request.to.floor_number));
                 int travelTime = Math.abs(request.to.floor_number - this.position.floor_number);
-                Thread.sleep(travelTime * 1000);
+                Thread.sleep(travelTime * 1_000);
                 this.position = new Floor(request.to.floor_number);
                 System.out.println(String.format("Arrived on Floor %s", this.position.floor_number));
                 System.out.println("Opening doors");
                 this.isMoving = false;
                 this.doors_open = true;
                 request.processing = false;
-                building.processRequest(request);
+                boolean clearedRequest = building.processRequest(request);
+                if(clearedRequest && this.occupants.size() >= 1){
+                    request.caller.getOut(this);
+                    System.out.println("Caller " + request.caller.id + " just stepped out.");
+                }
             } else {
                 throw new CannotMove("You cannot go to this floor");
             }
         }
     }
 
-    public void resetElevator() throws AlreadyReset {
+    public void reset() throws AlreadyReset {
         this.reset_button.push();
         if (this.reset_button.pushed) {
             this.doors_open = false;
@@ -104,13 +109,13 @@ public class Elevator {
         }
     }
 
-    public void pushEmergencyButton(){
+    public void emergency(){
         this.emergency_button.push();
         if (this.emergency_button.timesPushed > 1) {
             System.out.println("Please reset the elevator by pressing the reset button");
         } else {
             try {
-                resetElevator();
+                reset();
             } catch(AlreadyReset ex) {
                 System.out.println(ex.message);
                 this.doors_open = false;
@@ -119,8 +124,10 @@ public class Elevator {
         }
     }
 
-    public int displayOptions(List<Floor> floors){
-        List<Integer> floorOptions = floors.stream().map(floor -> floor.floor_number).collect(Collectors.toList());
+    public int displayOptions(List<Floor> floors, int startFrom, String direction){
+        List<Integer> floorOptions = floors.stream().map(floor -> floor.floor_number)
+                .filter(floorNumber -> direction.equals("up") ? floorNumber > startFrom : floorNumber < startFrom)
+                .collect(Collectors.toList());
         System.out.println("Please choose a destination floor");
         floorOptions.forEach(floor -> System.out.println(floor));
         int destination = Integer.parseInt(reader.next());

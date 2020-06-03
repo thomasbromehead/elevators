@@ -1,6 +1,7 @@
 package elevators;
 
 import building.Building;
+import exceptions.AlreadyReset;
 
 import java.time.Duration;
 import java.time.LocalTime;
@@ -20,7 +21,7 @@ public class Person {
         this.position = new Floor((int)(Math.floor(Math.random() * 10)));
     }
 
-    public void callElevator(Building building){
+    public String callElevator(Building building){
         this.trip_start_time = LocalTime.now();
         building.elevatorCalled = true;
         Scanner reader = new Scanner(System.in);
@@ -32,7 +33,8 @@ public class Person {
             directions.put(possibleDirections.indexOf(myDirection) + 1, myDirection);
         }
         System.out.println(directions);
-        building.requestList.add(this, new Request(new Floor(this.position.floor_number), new Floor(this.position.floor_number), directions.get(Integer.parseInt(direction))));
+        building.requestList.add(new Request(new Floor(this.position.floor_number), new Floor(this.position.floor_number), directions.get(Integer.parseInt(direction)), this));
+        return directions.get(Integer.parseInt(direction));
     }
 
     public void getIn(Elevator elevator){
@@ -52,6 +54,15 @@ public class Person {
             this.trip_end_time = LocalTime.now();
             System.out.println(String.format("Total travel time between time elevator was called and arrival (sec): %s", Duration.between(this.trip_start_time, this.trip_end_time).toSeconds()));
         }
+    }
+
+
+    public void resetElevator(Elevator elevator) throws AlreadyReset {
+        elevator.reset();
+    }
+
+    public void pushEmergencyButton(Elevator elevator){
+        elevator.emergency();
     }
 
 }
