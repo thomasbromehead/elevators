@@ -32,7 +32,7 @@ public class Person {
             directions.put(possibleDirections.indexOf(myDirection) + 1, myDirection);
         }
         System.out.println(directions);
-        building.requestList.add(new Request(new Floor(this.position.floor_number), new Floor(this.position.floor_number), directions.get(Integer.parseInt(direction))));
+        building.requestList.add(this, new Request(new Floor(this.position.floor_number), new Floor(this.position.floor_number), directions.get(Integer.parseInt(direction))));
     }
 
     public void getIn(Elevator elevator){

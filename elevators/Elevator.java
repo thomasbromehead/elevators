@@ -80,7 +80,7 @@ public class Elevator {
                 this.isMoving = true;
                 System.out.println(String.format("Moving to Floor %s", request.to.floor_number));
                 int travelTime = Math.abs(request.to.floor_number - this.position.floor_number);
-                Thread.sleep(travelTime);
+                Thread.sleep(travelTime * 1000);
                 this.position = new Floor(request.to.floor_number);
                 System.out.println(String.format("Arrived on Floor %s", this.position.floor_number));
                 System.out.println("Opening doors");

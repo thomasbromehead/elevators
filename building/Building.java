@@ -16,9 +16,9 @@ public class Building {
     public List<Elevator> elevatorList = new ArrayList<>();
     public List<Request> requestList = new ArrayList<>();
 
-    public Building(Elevator first_elevator, Elevator second_elevator){
-        this.elevatorA = first_elevator;
-        this.elevatorB = second_elevator;
+    public Building(Elevator firstElevator, Elevator secondElevator){
+        this.elevatorA = firstElevator;
+        this.elevatorB = secondElevator;
         elevatorList.add(0, this.elevatorA);
         elevatorList.add(1, this.elevatorB);
         createFloors();
